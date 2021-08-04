@@ -1,0 +1,44 @@
+---
+- hosts: nodes
+  tasks:
+  - name: Install a package
+    yum:
+      name: httpd
+      state: latest
+    when: ansible_distribution == "CentOS"
+  - name: Enable service autostart
+    service:
+      name: httpd
+      enabled: true
+      state: started
+  - name: Check service status
+    command:
+      systemctl status httpd
+    register: result
+    ignore_errors: yes
+  - name: Show result
+    debug:
+      var: result
+  - name: Creating a file with content
+    copy:
+      dest: "/var/www/html/index.html"
+      content: "Welcome to my web server"
+      mode: 0755
+  - name: Install firewalld
+    yum:
+      name: firewalld
+      state: latest
+    notify:
+      - start firewalld
+  - name: start firewalld
+    service:
+      name: firewalld
+      state: started
+      enabled: true
+  - name: Enable port 80
+    firewalld:
+      zone: public
+      port: 80/tcp
+      permanent: true
+      state: enabled
+...
