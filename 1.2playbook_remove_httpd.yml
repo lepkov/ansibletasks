@@ -1,0 +1,19 @@
+---
+- hosts: nodes
+  tasks:
+  - name: Remove a package
+    yum:
+      name: httpd
+      state: absent
+    when: ansible_distribution == "CentOS"
+  - name: Delete a file with content
+    file:
+      path: "/var/www/html/index.html"
+      state: absent
+  - name: Disable port 80
+    firewalld:
+      zone: public
+      port: 80/tcp
+      permanent: true
+      state: disabled
+...
