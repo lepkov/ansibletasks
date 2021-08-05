@@ -1,0 +1,14 @@
+---
+- name: httpd systemd
+  systemd:
+    name: httpd
+    enabled: yes
+    state: started
+- name: firewalld systemd
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: started
+- name: firewalld systemd restart
+  command: firewall-cmd --reload
+...
