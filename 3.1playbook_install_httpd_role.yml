@@ -1,0 +1,8 @@
+---
+- hosts: nodes
+  pre_tasks:
+    - name: Print all available facts
+      debug: var=ansible_all_ipv4_addresses
+  roles:
+    - apache
+...
