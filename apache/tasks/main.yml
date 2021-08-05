@@ -1,0 +1,30 @@
+---
+- name: Install Apache Web Server and firewalld on CentOS
+  yum:
+    name: "{{ item }}"
+    state: latest
+  when:
+    ansible_distribution == "CentOS"
+  loop:
+    - httpd
+    - firewalld
+  notify:
+    - "{{ item }} systemd"
+- name: Creating a file with content
+  copy:
+    dest: "/var/www/html/index.html"
+    content: "Dummy text"
+    mode: 0755
+- name: Replace index.html via templates
+  template:
+    src: "templates/index.html"
+    dest: "/var/www/html/index.html"
+- name: Enable port 80
+  firewalld:
+    zone: public
+    port: 80/tcp
+    permanent: true
+    state: enabled
+  notify:
+    - firewalld systemd restart
+...
