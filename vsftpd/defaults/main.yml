@@ -1,0 +1,7 @@
+ftp_server: vsftpd
+ftp_dir: /var/ftp/pub/
+ftp_config: /etc/vsftpd/vsftpd.conf
+ftp_upload_dir: /var/ftp/pub/upload/
+ftp_write_mode_name: ftpd_anon_write
+ftp_write_mode: on
+ports: 21/tcp
