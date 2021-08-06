@@ -1,0 +1,22 @@
+---
+- name: "{{ ftp_server }} systemd"
+  systemd:
+    name: "{{ ftp_server }}"
+    enabled: yes
+    state: started
+- name: policycoreutils-python-utils systemd
+  selinux:
+    policy: targeted
+    state: enforcing
+- name: firewalld systemd
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: started
+- name: firewalld systemd restart
+  command: firewall-cmd --reload
+- name: ftp systemd restart
+  systemd:
+    name: "{{ ftp_server }}"
+    state: restarted
+...
