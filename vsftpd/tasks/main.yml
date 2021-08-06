@@ -1,0 +1,49 @@
+---
+- name: Install {{ ftp_server }} on CentOS
+  yum:
+    name: "{{ item }}"
+    state: latest
+  when:
+    ansible_distribution == "CentOS"
+  loop:
+    - "{{ ftp_server }}"
+    - firewalld
+    - policycoreutils-python-utils
+  notify:
+    - "{{ item }} systemd"
+- name: Set SELinux permission for anon ftp
+  seboolean:
+    name: "{{ ftp_write_mode_name }}"
+    state: "{{ ftp_write_mode }}"
+    persistent: yes
+- name: Create ftp public directory
+  file:
+    state: directory
+    path: "{{ ftp_dir }}"
+    mode: '0755'
+    setype: public_content_rw_t
+- name: Create ftp upload directory
+  file:
+    state: directory
+    path: "{{ ftp_upload_dir }}"
+    mode: '0777'
+    setype: public_content_rw_t
+- name: Set ftp config and restart
+  template:
+    src: ftp.j2
+    dest: "{{ ftp_config }}"
+    mode: 644
+  notify:
+  - ftp systemd restart
+- name: Enable ports
+  firewalld:
+    zone: public
+    port: "{{ item }}"
+    permanent: true
+    immediate: yes
+    state: enabled
+  loop:
+    - "{{ ports }}"
+  notify:
+    - firewalld systemd restart
+...
