@@ -1,0 +1,8 @@
+---
+- hosts: nodes
+  pre_tasks:
+    - name: Print all ipvv4 addresses
+      debug: var=ansible_all_ipv4_addresses
+  roles:
+    - vsftpd
+...
